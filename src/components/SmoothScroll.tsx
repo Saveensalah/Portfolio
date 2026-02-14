@@ -9,19 +9,22 @@ export default function SmoothScroll({ children }: { children: ReactNode }) {
       duration: 1,
       easing: (t: number) => t === 1 ? 1 : 1 - Math.pow(2, -10 * t),
       smoothWheel: true,
-      smoothTouch: true,
       touchMultiplier: 2,
-      infiniteMomentum: false,
     })
+
+    let animationFrameId: number
 
     const raf = (time: number) => {
       lenis.raf(time)
-      requestAnimationFrame(raf)
+      animationFrameId = requestAnimationFrame(raf)
     }
 
-    requestAnimationFrame(raf)
+    animationFrameId = requestAnimationFrame(raf)
 
-    return () => lenis.destroy()
+    return () => {
+      cancelAnimationFrame(animationFrameId)
+      lenis.destroy()
+    }
   }, [])
 
   return <>{children}</>
