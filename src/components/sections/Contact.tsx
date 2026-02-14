@@ -37,7 +37,7 @@ export default function Contact() {
       formBody.append('message', formData.message)
 
       const response = await fetch(
-        'https://script.google.com/macros/s/AKfycbyL_GYNftrdrkBe05RkLsDWla3ExmSEiSzYuWpm0M94VWmiIBhuiNMnTVcXF7E3t4g-qA/exec',
+        'https://script.google.com/macros/s/AKfycbzph3TfoYiOYz6Supj5gRO1uVeP6XOamYEtoF0O5WGbhHAWn-iLhvOFKUsgH1CveQjQrg/exec',
         {
           method: 'POST',
           body: formBody,
