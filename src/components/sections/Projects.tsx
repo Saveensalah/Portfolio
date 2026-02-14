@@ -9,7 +9,7 @@ const projects = [
   {
     title: 'React SaaS Dashboard',
     description: 'Enterprise-level analytics dashboard with real-time data visualization, user authentication, and responsive design.',
-    image: 'https://via.placeholder.com/400x300',
+    image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&h=300&fit=crop',
     tags: ['React', 'Redux', 'Tailwind CSS', 'Firebase'],
     github: '#',
     live: '#',
@@ -17,7 +17,7 @@ const projects = [
   {
     title: 'WordPress Business Website',
     description: 'Custom WordPress theme with advanced Elementor integration, optimized for conversion and SEO best practices.',
-    image: 'https://via.placeholder.com/400x300',
+    image: '/images/wordpress.jpg',
     tags: ['WordPress', 'Elementor', 'PHP', 'CSS'],
     github: '#',
     live: '#',
@@ -25,7 +25,7 @@ const projects = [
   {
     title: 'DevOps Deployment Automation',
     description: 'CI/CD pipeline automation tool demonstrating deployment workflows, GitHub actions, and infrastructure as code principles.',
-    image: 'https://via.placeholder.com/400x300',
+    image: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=400&h=300&fit=crop',
     tags: ['Docker', 'CI/CD', 'Git', 'Linux'],
     github: '#',
     live: '#',
@@ -37,7 +37,7 @@ function ProjectCard({ project, index }: { project: typeof projects[0]; index: n
     <ScrollReveal delay={0.1 * index}>
       <motion.div
         whileHover={{ y: -10 }}
-        className="glass rounded-lg overflow-hidden glow-purple hover-card group"
+        className="glass rounded-lg overflow-hidden glow-purple hover-card group flex flex-col h-full"
       >
         {/* Image container */}
         <div className="relative h-64 overflow-hidden">
@@ -83,11 +83,11 @@ function ProjectCard({ project, index }: { project: typeof projects[0]; index: n
         </div>
 
         {/* Content */}
-        <div className="p-6">
+        <div className="p-6 flex flex-col flex-grow">
           <h3 className="text-xl font-bold mb-2 group-hover:text-neon-blue transition-colors">
             {project.title}
           </h3>
-          <p className="text-gray-400 mb-4 text-sm leading-relaxed">
+          <p className="text-gray-400 mb-4 text-sm leading-relaxed flex-grow">
             {project.description}
           </p>
 

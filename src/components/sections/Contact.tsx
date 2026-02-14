@@ -13,6 +13,8 @@ export default function Contact() {
     message: '',
   })
   const [submitted, setSubmitted] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -20,15 +22,41 @@ export default function Contact() {
       ...prev,
       [name]: value,
     }))
+    setError('')
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setSubmitted(true)
-    setTimeout(() => {
+    setLoading(true)
+    setError('')
+
+    try {
+      const formBody = new URLSearchParams()
+      formBody.append('name', formData.name)
+      formBody.append('email', formData.email)
+      formBody.append('message', formData.message)
+
+      const response = await fetch(
+        'https://script.google.com/macros/s/AKfycbyL_GYNftrdrkBe05RkLsDWla3ExmSEiSzYuWpm0M94VWmiIBhuiNMnTVcXF7E3t4g-qA/exec',
+        {
+          method: 'POST',
+          body: formBody,
+          mode: 'no-cors',
+        }
+      )
+
+      setSubmitted(true)
       setFormData({ name: '', email: '', message: '' })
-      setSubmitted(false)
-    }, 3000)
+      
+      setTimeout(() => {
+        setSubmitted(false)
+      }, 3000)
+    } catch (err) {
+      setError('Failed to send message. Please try again.')
+      console.error('Form submission error:', err)
+    } finally {
+      setLoading(false)
+    }
   }
 
   const contactInfo = [
@@ -116,7 +144,8 @@ export default function Contact() {
                   value={formData.name}
                   onChange={handleChange}
                   required
-                  className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 focus:outline-none focus:border-neon-blue transition-colors"
+                  disabled={loading}
+                  className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 focus:outline-none focus:border-neon-blue transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   placeholder="Your name"
                   aria-label="Your name"
                 />
@@ -133,7 +162,8 @@ export default function Contact() {
                   value={formData.email}
                   onChange={handleChange}
                   required
-                  className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 focus:outline-none focus:border-neon-blue transition-colors"
+                  disabled={loading}
+                  className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 focus:outline-none focus:border-neon-blue transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   placeholder="your.email@example.com"
                   aria-label="Your email"
                 />
@@ -149,21 +179,32 @@ export default function Contact() {
                   value={formData.message}
                   onChange={handleChange}
                   required
+                  disabled={loading}
                   rows={5}
-                  className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 focus:outline-none focus:border-neon-blue transition-colors resize-none"
+                  className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 focus:outline-none focus:border-neon-blue transition-colors resize-none disabled:opacity-50 disabled:cursor-not-allowed"
                   placeholder="Share your thoughts..."
                   aria-label="Your message"
                 />
               </div>
 
+              {error && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="p-3 bg-red-500/20 border border-red-500/50 rounded-lg text-red-400 text-sm"
+                >
+                  {error}
+                </motion.div>
+              )}
+
               <motion.button
                 type="submit"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="w-full px-6 py-3 bg-gradient-to-r from-neon-blue to-neon-purple rounded-lg font-semibold hover:shadow-lg transition-all disabled:opacity-50"
-                disabled={submitted}
+                className="w-full px-6 py-3 bg-gradient-to-r from-neon-blue to-neon-purple rounded-lg font-semibold hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled={submitted || loading}
               >
-                {submitted ? '✓ Message Sent!' : 'Send Message'}
+                {submitted ? '✓ Message Sent!' : loading ? 'Sending...' : 'Send Message'}
               </motion.button>
             </form>
           </motion.div>

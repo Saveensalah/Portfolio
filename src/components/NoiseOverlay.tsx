@@ -1,38 +1,43 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
-import { motion } from 'framer-motion'
 
 export default function NoiseOverlay() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
+  const noiseRef = useRef<ImageData | null>(null)
 
   useEffect(() => {
     const canvas = canvasRef.current
     if (!canvas) return
 
-    const ctx = canvas.getContext('2d')
+    const ctx = canvas.getContext('2d', { alpha: true })
     if (!ctx) return
 
-    canvas.width = window.innerWidth
-    canvas.height = window.innerHeight
+    const width = window.innerWidth
+    const height = window.innerHeight
+    canvas.width = width
+    canvas.height = height
 
-    const imageData = ctx.createImageData(canvas.width, canvas.height)
-    const data = imageData.data
+    if (!noiseRef.current) {
+      const imageData = ctx.createImageData(width, height)
+      const data = imageData.data
 
-    // Generate noise
-    for (let i = 0; i < data.length; i += 4) {
-      const value = Math.random() * 255
-      data[i] = value // R
-      data[i + 1] = value // G
-      data[i + 2] = value // B
-      data[i + 3] = Math.random() * 15 // A (very subtle)
+      for (let i = 0; i < data.length; i += 4) {
+        const value = Math.random() * 255
+        data[i] = value
+        data[i + 1] = value
+        data[i + 2] = value
+        data[i + 3] = 10
+      }
+      noiseRef.current = imageData
     }
 
-    ctx.putImageData(imageData, 0, 0)
+    ctx.putImageData(noiseRef.current, 0, 0)
 
     const handleResize = () => {
       canvas.width = window.innerWidth
       canvas.height = window.innerHeight
+      noiseRef.current = null
     }
 
     window.addEventListener('resize', handleResize)
@@ -43,6 +48,7 @@ export default function NoiseOverlay() {
     <canvas
       ref={canvasRef}
       className="fixed inset-0 pointer-events-none opacity-5 mix-blend-overlay z-0"
+      style={{ willChange: 'contents' }}
     />
   )
 }

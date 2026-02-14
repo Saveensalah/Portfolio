@@ -14,25 +14,25 @@ export default function Hero() {
         <div className="absolute inset-0 animated-gradient" />
         <motion.div
           animate={{
-            scale: [1, 1.1, 1],
-            opacity: [0.3, 0.5, 0.3],
+            scale: [1, 1.05, 1],
+            opacity: [0.3, 0.4, 0.3],
           }}
           transition={{
-            duration: 8,
+            duration: 12,
             repeat: Infinity,
           }}
-          className="absolute top-20 left-10 w-72 h-72 bg-neon-blue/20 rounded-full blur-3xl"
+          className="absolute top-20 left-10 w-72 h-72 bg-neon-blue/20 rounded-full blur-3xl will-change-transform"
         />
         <motion.div
           animate={{
-            scale: [1.1, 1, 1.1],
-            opacity: [0.5, 0.3, 0.5],
+            scale: [1.05, 1, 1.05],
+            opacity: [0.4, 0.3, 0.4],
           }}
           transition={{
-            duration: 8,
+            duration: 12,
             repeat: Infinity,
           }}
-          className="absolute bottom-20 right-10 w-96 h-96 bg-neon-purple/20 rounded-full blur-3xl"
+          className="absolute bottom-20 right-10 w-96 h-96 bg-neon-purple/20 rounded-full blur-3xl will-change-transform"
         />
       </div>
 
@@ -116,7 +116,7 @@ export default function Hero() {
                 <div className="absolute inset-0 bg-gradient-to-r from-neon-blue to-neon-purple rounded-2xl filter blur-2xl opacity-50" />
                 <div className="relative bg-gradient-to-br from-neon-blue/20 to-neon-purple/20 rounded-2xl p-2 glow-blue">
                   <Image
-                    src="https://via.placeholder.com/400x400"
+                    src="/images/profile.jpg"
                     alt="Saveen Salah"
                     width={400}
                     height={400}
