@@ -3,71 +3,106 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import ScrollReveal from '@/components/ScrollReveal'
-import { HiMail, HiLink } from 'react-icons/hi'
+import { HiMail } from 'react-icons/hi'
 import { FaGithub, FaLinkedinIn } from 'react-icons/fa'
 
 export default function Contact() {
+
+  // ✅ Your Google Apps Script Web App URL
+  const SCRIPT_URL =
+    'https://script.google.com/macros/s/AKfycbwwq_C92TpYaZF5urf0B0V-djqieja5-C8eTYiVor4UD3R5peDL7LAKrNYEO-6GWitn/exec'
+
+  // Form state
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     message: '',
   })
-  const [submitted, setSubmitted] = useState(false)
+
   const [loading, setLoading] = useState(false)
+  const [submitted, setSubmitted] = useState(false)
   const [error, setError] = useState('')
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  // Handle input change
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+
     const { name, value } = e.target
-    setFormData((prev) => ({
+
+    setFormData(prev => ({
       ...prev,
       [name]: value,
     }))
+
     setError('')
   }
 
+  // Handle form submit
   const handleSubmit = async (e: React.FormEvent) => {
+
     e.preventDefault()
+
     setLoading(true)
     setError('')
 
     try {
-      // Validate form data
-      if (!formData.name.trim() || !formData.email.trim() || !formData.message.trim()) {
-        setError('Please fill in all fields')
-        setLoading(false)
-        return
+
+      // Validate
+      if (
+        !formData.name.trim() ||
+        !formData.email.trim() ||
+        !formData.message.trim()
+      ) {
+        throw new Error('Please fill all fields')
       }
 
-      // Create URLSearchParams for Google Apps Script
-      const params = new URLSearchParams()
-      params.append('name', formData.name)
-      params.append('email', formData.email)
-      params.append('message', formData.message)
+      // Send POST request
+      const response = await fetch(SCRIPT_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      })
 
-      const response = await fetch(
-        'https://script.google.com/macros/s/AKfycbxN8o5bcdIpUFBQsU55OD5odGcE6UaM2CpQe3yzsXoSEgexxxDLxzcYYA19P2NXXBBk/exec?' + params.toString(),
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-          },
-        }
-      )
+      if (!response.ok) {
+        throw new Error('Failed to send message')
+      }
 
+      const result = await response.json()
+
+      console.log('Success:', result)
+
+      // Show success state
       setSubmitted(true)
-      setFormData({ name: '', email: '', message: '' })
-      
+
+      // Reset form
+      setFormData({
+        name: '',
+        email: '',
+        message: '',
+      })
+
+      // Hide success after 3 seconds
       setTimeout(() => {
         setSubmitted(false)
       }, 3000)
-    } catch (err) {
-      console.error('Form submission error:', err)
-      setError('Failed to send message. Please check the console for details.')
+
+    } catch (err: any) {
+
+      console.error(err)
+
+      setError(err.message || 'Something went wrong')
+
     } finally {
+
       setLoading(false)
+
     }
   }
 
+  // Contact links
   const contactInfo = [
     {
       icon: HiMail,
@@ -91,146 +126,156 @@ export default function Contact() {
 
   return (
     <section id="contact" className="section-padding relative">
+
       <div className="max-w-6xl mx-auto">
+
+        {/* Heading */}
         <ScrollReveal>
-          <div className="flex flex-col items-center text-center mb-16">
+
+          <div className="text-center mb-16">
+
             <h2 className="text-4xl md:text-5xl font-bold mb-4">
-              Let&apos;s <span className="bg-gradient-to-r from-neon-blue to-neon-purple bg-clip-text text-transparent">Connect</span>
+
+              Let&apos;s{' '}
+
+              <span className="bg-gradient-to-r from-neon-blue to-neon-purple bg-clip-text text-transparent">
+
+                Connect
+
+              </span>
+
             </h2>
-            <div className="w-20 h-1 bg-gradient-to-r from-neon-blue to-neon-purple rounded-full" />
-            <p className="mt-6 text-gray-400 max-w-2xl">
-              Have a project in mind or just want to say hello? I&apos;d love to hear from you!
+
+            <div className="w-20 h-1 bg-gradient-to-r from-neon-blue to-neon-purple mx-auto rounded-full" />
+
+            <p className="mt-6 text-gray-400">
+
+              Have a project in mind or just want to say hello?
+
             </p>
+
           </div>
+
         </ScrollReveal>
 
+
+        {/* Contact Info */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
-          {contactInfo.map((info, idx) => {
+
+          {contactInfo.map((info, index) => {
+
             const Icon = info.icon
+
             return (
-              <ScrollReveal key={idx} delay={0.1 * idx}>
+
+              <ScrollReveal key={index} delay={index * 0.1}>
+
                 <motion.a
                   href={info.href}
                   target="_blank"
                   rel="noopener noreferrer"
                   whileHover={{ scale: 1.05 }}
-                  className="glass rounded-lg p-6 glow-blue hover-card text-center group"
+                  className="glass p-6 rounded-lg text-center"
                 >
-                  <motion.div
-                    whileHover={{ rotate: 360 }}
-                    transition={{ duration: 0.5 }}
-                    className="inline-block p-3 glass rounded-lg mb-4 group-hover:bg-white/20 transition-all"
-                  >
-                    <Icon size={24} className="text-neon-blue" />
-                  </motion.div>
-                  <h3 className="font-semibold mb-2">{info.label}</h3>
-                  <p className="text-sm text-gray-400 hover:text-neon-blue transition-colors">
+
+                  <Icon
+                    size={24}
+                    className="mx-auto mb-3 text-neon-blue"
+                  />
+
+                  <h3 className="font-semibold mb-1">
+                    {info.label}
+                  </h3>
+
+                  <p className="text-gray-400 text-sm">
                     {info.value}
                   </p>
+
                 </motion.a>
+
               </ScrollReveal>
+
             )
+
           })}
+
         </div>
 
-        {/* Contact Form */}
-        <ScrollReveal delay={0.3}>
-          <motion.div
-            whileHover={{ scale: 1.01 }}
-            className="glass rounded-lg p-8 glow-purple max-w-2xl mx-auto"
-          >
-            <h3 className="text-2xl font-bold mb-6 text-center">Send me a Message</h3>
 
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div>
-                <label htmlFor="name" className="block text-sm font-medium mb-2">
-                  Name
-                </label>
-                <input
-                  type="text"
-                  id="name"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  required
-                  disabled={loading}
-                  className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 focus:outline-none focus:border-neon-blue transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                  placeholder="Your name"
-                  aria-label="Your name"
-                />
-              </div>
+        {/* Form */}
+        <ScrollReveal>
 
-              <div>
-                <label htmlFor="email" className="block text-sm font-medium mb-2">
-                  Email
-                </label>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  required
-                  disabled={loading}
-                  className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 focus:outline-none focus:border-neon-blue transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                  placeholder="your.email@example.com"
-                  aria-label="Your email"
-                />
-              </div>
+          <div className="glass p-8 rounded-lg max-w-2xl mx-auto">
 
-              <div>
-                <label htmlFor="message" className="block text-sm font-medium mb-2">
-                  Message
-                </label>
-                <textarea
-                  id="message"
-                  name="message"
-                  value={formData.message}
-                  onChange={handleChange}
-                  required
-                  disabled={loading}
-                  rows={5}
-                  className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 focus:outline-none focus:border-neon-blue transition-colors resize-none disabled:opacity-50 disabled:cursor-not-allowed"
-                  placeholder="Share your thoughts..."
-                  aria-label="Your message"
-                />
-              </div>
+            <h3 className="text-2xl font-bold mb-6 text-center">
+              Send Message
+            </h3>
 
+            <form onSubmit={handleSubmit} className="space-y-4">
+
+              {/* Name */}
+              <input
+                type="text"
+                name="name"
+                placeholder="Your Name"
+                value={formData.name}
+                onChange={handleChange}
+                disabled={loading}
+                className="w-full p-3 rounded bg-white/5 border border-white/10"
+              />
+
+              {/* Email */}
+              <input
+                type="email"
+                name="email"
+                placeholder="Your Email"
+                value={formData.email}
+                onChange={handleChange}
+                disabled={loading}
+                className="w-full p-3 rounded bg-white/5 border border-white/10"
+              />
+
+              {/* Message */}
+              <textarea
+                name="message"
+                placeholder="Your Message"
+                rows={5}
+                value={formData.message}
+                onChange={handleChange}
+                disabled={loading}
+                className="w-full p-3 rounded bg-white/5 border border-white/10"
+              />
+
+              {/* Error */}
               {error && (
-                <motion.div
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="p-3 bg-red-500/20 border border-red-500/50 rounded-lg text-red-400 text-sm"
-                >
+                <div className="text-red-400 text-sm">
                   {error}
-                </motion.div>
+                </div>
               )}
 
-              <motion.button
+              {/* Button */}
+              <button
                 type="submit"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="w-full px-6 py-3 bg-gradient-to-r from-neon-blue to-neon-purple rounded-lg font-semibold hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                disabled={submitted || loading}
+                disabled={loading}
+                className="w-full py-3 bg-gradient-to-r from-neon-blue to-neon-purple rounded font-semibold"
               >
-                {submitted ? '✓ Message Sent!' : loading ? 'Sending...' : 'Send Message'}
-              </motion.button>
+
+                {loading
+                  ? 'Sending...'
+                  : submitted
+                    ? '✓ Message Sent'
+                    : 'Send Message'}
+
+              </button>
+
             </form>
-          </motion.div>
+
+          </div>
+
         </ScrollReveal>
 
-        {/* Footer */}
-        <ScrollReveal delay={0.5}>
-          <div className="mt-16 pt-12 border-t border-white/10 text-center text-gray-400">
-            <p className="mb-4">
-              Made with <span className="text-neon-pink">❤</span> by Saveen Salah
-            </p>
-            <p className="text-sm">
-              © 2026 All rights reserved. Built with Next.js, React, and Framer Motion.
-            </p>
-          </div>
-        </ScrollReveal>
       </div>
+
     </section>
   )
 }
