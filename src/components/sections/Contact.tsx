@@ -8,7 +8,7 @@ import { FaGithub, FaLinkedinIn } from 'react-icons/fa'
 
 export default function Contact() {
 
-  // ✅ Your Google Apps Script Web App URL
+  // Google Apps Script Web App URL
   const SCRIPT_URL =
     'https://script.google.com/macros/s/AKfycbwwq_C92TpYaZF5urf0B0V-djqieja5-C8eTYiVor4UD3R5peDL7LAKrNYEO-6GWitn/exec'
 
@@ -57,24 +57,17 @@ export default function Contact() {
         throw new Error('Please fill all fields')
       }
 
-      // Send POST request
-      const response = await fetch(SCRIPT_URL, {
+      // Send data to Google Sheets
+      await fetch(SCRIPT_URL, {
         method: 'POST',
+        mode: 'no-cors', // IMPORTANT: fixes CORS issue
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(formData),
       })
 
-      if (!response.ok) {
-        throw new Error('Failed to send message')
-      }
-
-      const result = await response.json()
-
-      console.log('Success:', result)
-
-      // Show success state
+      // Show success
       setSubmitted(true)
 
       // Reset form
@@ -93,7 +86,7 @@ export default function Contact() {
 
       console.error(err)
 
-      setError(err.message || 'Something went wrong')
+      setError('Failed to send message')
 
     } finally {
 
@@ -149,9 +142,7 @@ export default function Contact() {
             <div className="w-20 h-1 bg-gradient-to-r from-neon-blue to-neon-purple mx-auto rounded-full" />
 
             <p className="mt-6 text-gray-400">
-
               Have a project in mind or just want to say hello?
-
             </p>
 
           </div>
@@ -202,7 +193,7 @@ export default function Contact() {
         </div>
 
 
-        {/* Form */}
+        {/* Contact Form */}
         <ScrollReveal>
 
           <div className="glass p-8 rounded-lg max-w-2xl mx-auto">
@@ -213,7 +204,6 @@ export default function Contact() {
 
             <form onSubmit={handleSubmit} className="space-y-4">
 
-              {/* Name */}
               <input
                 type="text"
                 name="name"
@@ -224,7 +214,6 @@ export default function Contact() {
                 className="w-full p-3 rounded bg-white/5 border border-white/10"
               />
 
-              {/* Email */}
               <input
                 type="email"
                 name="email"
@@ -235,7 +224,6 @@ export default function Contact() {
                 className="w-full p-3 rounded bg-white/5 border border-white/10"
               />
 
-              {/* Message */}
               <textarea
                 name="message"
                 placeholder="Your Message"
@@ -246,14 +234,12 @@ export default function Contact() {
                 className="w-full p-3 rounded bg-white/5 border border-white/10"
               />
 
-              {/* Error */}
               {error && (
                 <div className="text-red-400 text-sm">
                   {error}
                 </div>
               )}
 
-              {/* Button */}
               <button
                 type="submit"
                 disabled={loading}
