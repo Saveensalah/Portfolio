@@ -226,7 +226,7 @@ export default function Contact() {
 
               <textarea
                 name="message"
-                placeholder="Your Message"
+                placeholder="Your Message for me"
                 rows={5}
                 value={formData.message}
                 onChange={handleChange}
