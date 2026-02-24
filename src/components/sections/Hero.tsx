@@ -79,7 +79,8 @@ export default function Hero() {
                   </motion.a>
 
                   <motion.a
-                    href="/"
+                    href="/resume_doc/saveen_salah"
+                    download
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     className="px-8 py-3 glass rounded-lg font-semibold hover:bg-white/20 transition-all"

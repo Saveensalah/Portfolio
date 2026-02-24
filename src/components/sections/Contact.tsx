@@ -100,8 +100,8 @@ export default function Contact() {
     {
       icon: HiMail,
       label: 'Email',
-      value: 'saveen.dev@example.com',
-      href: 'mailto:saveen.dev@example.com',
+      value: 'saveensalahpec18cs022@gmail.com',
+      href: 'mailto:saveensalahpec18cs022@gmail.com',
     },
     {
       icon: FaLinkedinIn,
